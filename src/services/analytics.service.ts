@@ -1,4 +1,4 @@
-import type { WeatherData, AQIData } from '../types/api.types';
+// analytics.service.ts
 
 const ARCHIVE_WEATHER_URL = 'https://archive-api.open-meteo.com/v1/archive';
 

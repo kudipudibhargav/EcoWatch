@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BarChart2, Calendar, TrendingUp, Droplets } from 'lucide-react';
+import { BarChart2, TrendingUp, Droplets } from 'lucide-react';
 import { useEnv } from '../context/EnvContext';
 import { AnalyticsService } from '../services/analytics.service';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend } from 'recharts';

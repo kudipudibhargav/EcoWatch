@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, Moon, Sun, Bell, Wind, Thermometer, Shield } from 'lucide-react';
+import { Settings, Moon, Sun, Thermometer, Shield } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const SettingsDashboard = () => {
