@@ -1,0 +1,112 @@
+.weather-card-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  height: 100%;
+  justify-content: space-between;
+  background: linear-gradient(145deg, var(--bg-surface-glass), rgba(19, 23, 34, 0.4));
+}
+
+.weather-header {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 2rem;
+}
+
+.weather-main-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.temp-display {
+  display: flex;
+  flex-direction: column;
+}
+
+.temp-value {
+  font-size: 3.5rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(to bottom right, #FFFFFF, var(--text-secondary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.temp-feels {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin-top: 0.25rem;
+}
+
+.weather-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weather-icon {
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+.weather-icon.sun { color: var(--accent-warning); filter: drop-shadow(0 0 15px rgba(245, 158, 11, 0.5)); }
+.weather-icon.rain { color: var(--accent-primary); }
+.weather-icon.cloud { color: var(--text-secondary); }
+.weather-icon.storm { color: var(--accent-secondary); filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.6)); }
+
+.status-text {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+}
+
+.weather-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.metric-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.metric-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.metric-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.skeleton-text {
+  height: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  width: 100%;
+  margin-bottom: 0.5rem;
+  animation: pulse 1.5s infinite;
+}
+.skeleton-text.short { width: 60%; }
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.6; }
+}

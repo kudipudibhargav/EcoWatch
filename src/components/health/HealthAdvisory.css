@@ -1,0 +1,98 @@
+.health-advisory-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.health-advisory-container.span-2 {
+  grid-column: span 2;
+}
+
+.health-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.health-header .header-icon {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+}
+
+.health-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.risk-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.recommendations {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  flex: 1;
+}
+
+.recommendations h4 {
+  font-size: 0.875rem;
+  color: var(--text-tertiary);
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.recommendations ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recommendations li {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.recommendations li::before {
+  content: "•";
+  color: var(--text-tertiary);
+}
+
+/* Specific Risk Styling via parent classes */
+.health-advisory-container.warning .health-header .header-icon {
+  color: var(--accent-warning);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+.health-advisory-container.danger .health-header .header-icon {
+  color: var(--accent-danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.health-advisory-container.severe .health-header .header-icon {
+  color: #991B1B;
+  background: rgba(153, 27, 27, 0.1);
+}
+
+@media (max-width: 1024px) {
+  .health-advisory-container.span-2 {
+    grid-column: span 1;
+  }
+}
