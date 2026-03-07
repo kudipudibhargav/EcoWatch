@@ -22,7 +22,7 @@ const navItems = [
   { path: '/settings', icon: <Settings size={20} />, translationKey: 'settings' },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) => {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   const { t } = useLanguage();
@@ -38,10 +38,16 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="sidebar glass-panel">
+    <aside className={`sidebar glass-panel${isOpen ? ' open' : ''}`}>
       <div className="sidebar-brand">
         <Wind className="brand-icon" size={28} />
         <h2>EcoWatch</h2>
+        {/* Close button visible only on mobile when sidebar is open */}
+        {isOpen && (
+          <button onClick={onClose} style={{ marginLeft: 'auto', background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '0.25rem' }}>
+            ✕
+          </button>
+        )}
       </div>
 
       <nav className="sidebar-nav">

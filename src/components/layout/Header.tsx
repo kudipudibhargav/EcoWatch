@@ -7,7 +7,7 @@ import type { GeolocationData } from '../../types/api.types';
 import { useNavigate } from 'react-router-dom';
 import './Header.css';
 
-const Header = () => {
+const Header = ({ onMenuToggle }: { onMenuToggle?: () => void }) => {
   const { weather, aqi, location, searchLocation, setLocation } = useEnv();
   const { language, setLanguage, t } = useLanguage();
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -120,7 +120,7 @@ const Header = () => {
   return (
     <header className="app-header glass-panel">
       <div className="header-left">
-        <button className="mobile-menu-btn icon-btn">
+        <button className="mobile-menu-btn icon-btn" onClick={onMenuToggle} aria-label="Toggle menu">
           <Menu size={20} />
         </button>
         

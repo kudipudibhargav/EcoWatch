@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router-dom';
+import { useState } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { useAuth } from '../../context/AuthContext';
@@ -7,6 +8,7 @@ import './Layout.css';
 
 const DashboardLayout = () => {
   const { currentUser, loading } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (loading) {
      return <div className="app-container" style={{ background: 'var(--bg-dark)' }} />;
@@ -23,9 +25,16 @@ const DashboardLayout = () => {
            transition: 'filter 0.8s cubic-bezier(0.4, 0, 0.2, 1)', 
          }}
       >
-        <Sidebar />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        {/* Mobile overlay backdrop */}
+        {sidebarOpen && (
+          <div 
+            onClick={() => setSidebarOpen(false)}
+            style={{ position: 'fixed', inset: 0, zIndex: 49, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(2px)' }}
+          />
+        )}
         <div className="main-content">
-          <Header />
+          <Header onMenuToggle={() => setSidebarOpen(o => !o)} />
           <main className="page-content">
             <Outlet />
           </main>
