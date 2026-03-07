@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Lock, Mail, Phone, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Lock, Mail, Phone, ShieldCheck, RefreshCw, Eye, EyeOff, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 
 // Removed Recaptcha global window definition
 
 const LoginDashboard = () => {
-  const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
+  const [loginMethod, setLoginMethod] = useState<'email' | 'phone' | 'password'>('password');
   
   // Shared States
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
   
-  // Email states
+  // Email OTP states
   const [email, setEmail] = useState('');
   const [emailOtpStage, setEmailOtpStage] = useState(false);
   const [emailOtpInput, setEmailOtpInput] = useState('');
@@ -27,6 +27,13 @@ const LoginDashboard = () => {
   const [phoneOtpStage, setPhoneOtpStage] = useState(false);
   const [phoneOtpInput, setPhoneOtpInput] = useState('');
   const [generatedPhoneOtp, setGeneratedPhoneOtp] = useState('');
+
+  // Password Login states
+  const [pwEmail, setPwEmail] = useState('');
+  const [pwName, setPwName] = useState('');
+  const [pwPassword, setPwPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const navigate = useNavigate();
 
@@ -207,6 +214,37 @@ const LoginDashboard = () => {
     }
   };
 
+  // --------------- EMAIL+PASSWORD LOGIN/SIGNUP ---------------
+  const handlePasswordAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg('');
+    setLoading(true);
+    try {
+      if (isSignUp) {
+        if (!pwName.trim()) throw new Error('Name is required for sign up.');
+        const userCredential = await createUserWithEmailAndPassword(auth, pwEmail, pwPassword);
+        await updateProfile(userCredential.user, { displayName: pwName });
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          uid: userCredential.user.uid, name: pwName, email: pwEmail,
+          createdAt: serverTimestamp(), provider: 'email'
+        });
+      } else {
+        await signInWithEmailAndPassword(auth, pwEmail, pwPassword);
+      }
+      navigate('/');
+    } catch (err: any) {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+        setErrorMsg('No account found. Please sign up first.');
+      } else if (err.code === 'auth/wrong-password') {
+        setErrorMsg('Incorrect password. Please try again.');
+      } else {
+        setErrorMsg(err.message || 'Authentication failed.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="dashboard-container fade-in" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', width: '100%' }}>
       
@@ -230,18 +268,24 @@ const LoginDashboard = () => {
 
         {/* Tab Switcher */}
         {(!emailOtpStage && !phoneOtpStage) && (
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', position: 'relative', zIndex: 1 }}>
+            <button 
+               onClick={() => setLoginMethod('password')}
+               style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', background: loginMethod === 'password' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: loginMethod === 'password' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.8rem', transition: 'all 0.2s' }}
+            >
+              <Lock size={14} /> Password
+            </button>
             <button 
                onClick={() => setLoginMethod('email')}
-               style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-md)', background: loginMethod === 'email' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: loginMethod === 'email' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
+               style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', background: loginMethod === 'email' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: loginMethod === 'email' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.8rem', transition: 'all 0.2s' }}
             >
-              <Mail size={16} /> Email OTP
+              <Mail size={14} /> Email OTP
             </button>
             <button 
                onClick={() => setLoginMethod('phone')}
-               style={{ flex: 1, padding: '0.75rem', borderRadius: 'var(--radius-md)', background: loginMethod === 'phone' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: loginMethod === 'phone' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', transition: 'all 0.2s' }}
+               style={{ flex: 1, padding: '0.65rem', borderRadius: 'var(--radius-md)', background: loginMethod === 'phone' ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)', color: loginMethod === 'phone' ? 'white' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.8rem', transition: 'all 0.2s' }}
             >
-              <Phone size={16} /> Mobile SMS
+              <Phone size={14} /> Mobile
             </button>
           </div>
         )}
@@ -263,6 +307,55 @@ const LoginDashboard = () => {
         {/* Container for OTP forms */}
 
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+
+          {/* PASSWORD FLOW */}
+          {loginMethod === 'password' && (
+            <form onSubmit={handlePasswordAuth} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              {isSignUp && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <label style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Full Name</label>
+                  <div style={{ position: 'relative' }}>
+                    <User size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+                    <input type="text" value={pwName} onChange={(e) => setPwName(e.target.value)} placeholder="Enter your name"
+                      style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }}
+                      required={isSignUp} />
+                  </div>
+                </div>
+              )}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Email Address</label>
+                <div style={{ position: 'relative' }}>
+                  <Mail size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+                  <input type="email" value={pwEmail} onChange={(e) => setPwEmail(e.target.value)} placeholder="Enter your email"
+                    style={{ width: '100%', padding: '0.75rem 1rem 0.75rem 2.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }}
+                    required />
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', fontWeight: 500 }}>Password</label>
+                <div style={{ position: 'relative' }}>
+                  <Lock size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
+                  <input type={showPassword ? 'text' : 'password'} value={pwPassword} onChange={(e) => setPwPassword(e.target.value)} placeholder="••••••••"
+                    style={{ width: '100%', padding: '0.75rem 2.75rem 0.75rem 2.75rem', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)', outline: 'none' }}
+                    required />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)}
+                    style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
+                </div>
+              </div>
+              <button type="submit" disabled={loading}
+                style={{ marginTop: '0.5rem', width: '100%', padding: '0.875rem', background: 'var(--accent-primary)', color: '#fff', border: 'none', borderRadius: 'var(--radius-md)', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+                {loading ? 'Processing...' : (isSignUp ? 'Create Account' : 'Sign In')}
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>
+                {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+                <span onClick={() => { setIsSignUp(!isSignUp); setErrorMsg(''); }} style={{ color: 'var(--accent-primary)', cursor: 'pointer', fontWeight: 600 }}>
+                  {isSignUp ? 'Sign In' : 'Sign Up'}
+                </span>
+              </p>
+            </form>
+          )}
           
           {/* EMAIL FLOW */}
           {loginMethod === 'email' && (
