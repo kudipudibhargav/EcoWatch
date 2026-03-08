@@ -112,3 +112,69 @@
     align-self: flex-end;
   }
 }
+
+/* Sky Events widget header mobile fix */
+.events-container .widget-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.time-filter {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: nowrap;
+}
+
+.time-filter span {
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.time-filter span.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.time-filter span:hover:not(.active) {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-primary);
+}
+
+@media (max-width: 480px) {
+  .events-container .widget-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .time-filter {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .time-filter span {
+    flex: 1;
+    text-align: center;
+  }
+
+  .events-container.span-2 {
+    grid-column: span 1;
+  }
+}
