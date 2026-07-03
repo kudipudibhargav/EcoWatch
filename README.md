@@ -11,6 +11,8 @@
 
 🔗 **Live Site:** [https://eco-watch-seven.vercel.app/](https://eco-watch-seven.vercel.app/)
 
+![EcoWatch Dashboard Screen](screenshots/dashboard.png)
+
 ---
 
 ## 🚀 Key Features
